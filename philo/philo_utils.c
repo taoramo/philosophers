@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo_utils.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: toramo <toramo.student@hive.fi>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/02 10:52:46 by toramo            #+#    #+#             */
+/*   Updated: 2024/01/02 10:52:47 by toramo           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 int	print_error(void)
@@ -30,13 +42,16 @@ int	free_philo(t_philo **arr, int exit, unsigned int n)
 	unsigned int	i;
 
 	i = 0;
-	free(arr[0]->threads);
-	free(arr[0]->muteces);
-	free(arr[0]->death);
-	while (i < n)
+	if (arr)
 	{
-		free(arr[i]);
-		i++;
+		free(arr[0]->threads);
+		free(arr[0]->muteces);
+		free(arr[0]->death);
+		while (i < n)
+		{
+			free(arr[i]);
+			i++;
+		}
 	}
 	free(arr);
 	if (exit == 2)
