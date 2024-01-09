@@ -1,7 +1,7 @@
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 NAME = philo
-SRCS = ft_atoi_unsigned.c philo.c philo_actions.c philo_monitor.c philo_utils.c philosopher.c
+SRCS = ft_atoi_unsigned.c philo.c philo_actions.c philo_monitor.c philo_utils.c philosopher.c philo_time.c
 INCLUDES = philo.h
 OBJS = $(SRCS:.c=.o)
 

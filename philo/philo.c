@@ -12,30 +12,6 @@
 
 #include "philo.h"
 
-int	check_input(int argc, char **argv)
-{
-	int	i;
-	int	j;
-
-	i = 1;
-	if (argc != 5 && argc != 6)
-		return (print_error());
-	while (i < argc)
-	{
-		j = 0;
-		while (argv[i][j])
-		{
-			if (argv[i][j] < 48 || argv[i][j] > 57)
-				return (0);
-			j++;
-		}
-		if ((i == 1 || i == 5) && ft_atoi_unsigned(argv[i]) == 0)
-			return (print_error());
-		i++;
-	}
-	return (1);
-}
-
 t_philo	**init_philo_values(int argc, char **argv, t_philo **arr)
 {
 	unsigned int	i;
@@ -57,26 +33,32 @@ t_philo	**init_philo_values(int argc, char **argv, t_philo **arr)
 	return (arr);
 }
 
-int	check_malloc(t_philo **a, int *d, pthread_t *t, pthread_mutex_t *m)
+int	init_muteces(t_philo **arr, unsigned int n)
 {
-	if (!a || !d || !t || !m)
+	pthread_mutex_t	*death_mutex;
+	pthread_mutex_t	*time_mutex;
+	unsigned int	i;
+
+	death_mutex = malloc(sizeof(pthread_mutex_t *));
+	time_mutex = malloc(sizeof(pthread_mutex_t) * n);
+	if (!death_mutex || !time_mutex)
+		return (free_philo(arr, 4, n));
+	if (pthread_mutex_init(death_mutex, 0) != 0)
+		return (free_philo(arr, 5, n));
+	i = 0;
+	while (i < n)
 	{
-		printf("Error allocating memory\n");
-		if (a)
-			free(a);
-		if (d)
-			free(d);
-		if (t)
-			free(t);
-		if (m)
-			free(m);
-		return (0);
+		arr[i]->death_mutex = death_mutex;
+		arr[i]->time_mutex = time_mutex;
+		if (pthread_mutex_init(&time_mutex[i], 0) != 0
+			|| pthread_mutex_init(&arr[i]->muteces[i], 0) != 0)
+			return (free_philo(arr, 5, n));
+		i++;
 	}
-	else
-		return (1);
+	return (0);
 }
 
-t_philo	**init_philo_ptrs(unsigned int n, int argc, char **argv)
+t_philo	**init_philo_ptrs(unsigned int n)
 {
 	int				*death;
 	pthread_t		*threads;
@@ -84,8 +66,6 @@ t_philo	**init_philo_ptrs(unsigned int n, int argc, char **argv)
 	t_philo			**arr;
 	unsigned int	i;
 
-	if (!check_input(argc, argv))
-		return (0);
 	arr = malloc(sizeof(t_philo *) * n);
 	death = (int *)malloc(sizeof(int *));
 	threads = malloc(sizeof(pthread_t) * (n + 1));
@@ -102,33 +82,43 @@ t_philo	**init_philo_ptrs(unsigned int n, int argc, char **argv)
 		arr[i]->muteces = muteces;
 		i++;
 	}
+	init_muteces(arr, n);
 	return (arr);
 }
 
-int	main(int argc, char **argv)
+int	manage_threads(t_philo **arr, char **argv)
 {
-	t_philo			**arr;
-	int				i;
+	unsigned int	i;
 
-	arr = init_philo_ptrs(ft_atoi_unsigned(argv[1]), argc, argv);
-	if (!arr)
-		return (free_philo(arr, 1, ft_atoi_unsigned(argv[1])));
-	arr = init_philo_values(argc, argv, arr);
 	i = 0;
+	set_start_time(arr);
 	while (i < arr[0]->n)
 	{
-		if (pthread_create(&arr[0]->threads[i], 0, &philosopher, arr[i]) != 0
-			|| pthread_mutex_init(&arr[0]->muteces[i], 0) != 0)
+		if (pthread_create(&arr[0]->threads[i], 0, &philosopher, arr[i]) != 0)
 			return (free_philo(arr, 2, ft_atoi_unsigned(argv[1])));
 		i++;
 	}
 	if (pthread_create(&arr[0]->threads[i], 0, &philo_monitor, arr) != 0)
 		return (free_philo(arr, 2, ft_atoi_unsigned(argv[1])));
-	while (i)
+	i = 0;
+	while (i < arr[0]->n + 1)
 	{
 		if (pthread_join(arr[0]->threads[i], 0) != 0)
 			return (free_philo(arr, 3, ft_atoi_unsigned(argv[1])));
-		i--;
+		i++;
 	}
 	return (free_philo(arr, 0, ft_atoi_unsigned(argv[1])));
+}
+
+int	main(int argc, char **argv)
+{
+	t_philo			**arr;
+
+	if (!check_input(argc, argv))
+		return (0);
+	arr = init_philo_ptrs(ft_atoi_unsigned(argv[1]));
+	if (!arr)
+		return (free_philo(arr, 1, ft_atoi_unsigned(argv[1])));
+	arr = init_philo_values(argc, argv, arr);
+	return (manage_threads(arr, argv));
 }

@@ -12,8 +12,8 @@
 
 unsigned int	ft_atoi_unsigned(const char *str)
 {
-	int				i;
-	unsigned int	result;
+	int					i;
+	unsigned int		result;
 
 	if (!str)
 		return (0);
@@ -25,4 +25,24 @@ unsigned int	ft_atoi_unsigned(const char *str)
 		i++;
 	}
 	return (result);
+}
+
+int	check_overflow(const char *str)
+{
+	int						i;
+	unsigned long int		result;
+
+	if (!str)
+		return (0);
+	result = 0;
+	i = 0;
+	while (str[i] != 0 && str[i] > 47 && str[i] < 58)
+	{
+		result = result * 10 + (str[i] - 48);
+		i++;
+	}
+	if (result > 4294967295)
+		return (1);
+	else
+		return (0);
 }
