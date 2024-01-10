@@ -38,7 +38,7 @@ void	*philo_monitor(void *arg)
 	while (1)
 	{
 		check_death(p);
-		usleep(5000);
+		usleep(2000);
 	}
 	return (0);
 }
