@@ -18,7 +18,7 @@ int	print_error(void)
 	return (0);
 }
 
-unsigned long int	timestamp(void)
+unsigned long int	sys_timestamp(void)
 {
 	struct timeval	time;
 
@@ -31,8 +31,8 @@ int	ft_usleep(unsigned long milliseconds)
 {
 	unsigned long	start;
 
-	start = timestamp();
-	while ((timestamp() - start) < milliseconds)
+	start = sys_timestamp();
+	while ((sys_timestamp() - start) < milliseconds)
 		usleep(500);
 	return (0);
 }

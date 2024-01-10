@@ -45,14 +45,12 @@ int	check_malloc(t_philo *a, int *p)
 		return (1);
 }
 
-t_philo	*init_philo_ptrs(unsigned int n, int argc, char **argv)
+t_philo	*init_philo_ptrs(unsigned int n)
 {
 	int				*pids;
 	t_philo			*p;
 	unsigned int	i;
 
-	if (!check_input(argc, argv))
-		return (0);
 	p = malloc(sizeof(t_philo));
 	pids = malloc(sizeof(int) * (n + 1));
 	init_pids(pids, n);
@@ -69,9 +67,10 @@ t_philo	*init_philo_ptrs(unsigned int n, int argc, char **argv)
 
 void	init_processes(t_philo *p, int n)
 {
-	int	i;
+	int		i;
 
 	i = 0;
+	p->timestamp_start = sys_timestamp();
 	while (i < n)
 	{
 		p->pids[i] = fork();
@@ -92,20 +91,22 @@ void	init_processes(t_philo *p, int n)
 int	main(int argc, char **argv)
 {
 	t_philo			*p;
-	pthread_t		monitor;
+	sem_t			*death;
 
 	sem_unlink("/forks");
 	sem_unlink("/death");
+	if (!check_input(argc, argv))
+		return (0);
 	if (sem_open("/forks", O_CREAT, 0666,
 			ft_atoi_unsigned(argv[1])) == SEM_FAILED
 		|| sem_open("/death", O_CREAT, 0666, 0) == SEM_FAILED)
 		free_philo(0, 1);
-	p = init_philo_ptrs(ft_atoi_unsigned(argv[1]), argc, argv);
+	p = init_philo_ptrs(ft_atoi_unsigned(argv[1]));
 	if (!p)
 		return (free_philo(p, 3));
 	p = init_philo_values(argc, argv, p);
-	if (pthread_create(&monitor, 0, &philo_monitor, p) != 0)
-		free_philo(p, 4);
 	init_processes(p, ft_atoi_unsigned(argv[1]));
+	death = sem_open("/death", 0);
+	sem_post(death);
 	return (free_philo(p, 0));
 }

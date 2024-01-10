@@ -12,19 +12,35 @@
 
 #include "philo_bonus.h"
 
+void	open_semaphores(t_philo *p)
+{
+	sem_t	*forks;
+	sem_t	*death;
+	char	name[32];
+
+	ft_strlcpy(name, "/time", 6);
+	ft_utoa(p->i, &name[5]);
+	sem_unlink(name);
+	p->time = sem_open(name, O_CREAT, 0666, 1);
+	if (p->time == SEM_FAILED)
+		free_philo(p, 1);
+	forks = sem_open("/forks", 0);
+	death = sem_open("/death", 0);
+	if (forks == SEM_FAILED || death == SEM_FAILED || p->time == SEM_FAILED)
+		free_philo(p, 1);
+	p->forks = forks;
+	p->death = death;
+}
+
 void	*ft_death(void *arg)
 {
 	t_philo	*p;
-	sem_t	*death;
 
 	p = (t_philo *)arg;
-	death = sem_open("/death", 0);
-	if (death == SEM_FAILED)
-		printf("Error opening death semaphore\n");
-	sem_wait(death);
+	sem_wait(p->death);
+	sem_post(p->death);
 	free(p->pids);
 	free(p);
-	sem_post(death);
 	exit(0);
 	return (0);
 }
@@ -46,9 +62,15 @@ int	check_input(int argc, char **argv)
 				return (0);
 			j++;
 		}
-		if ((i == 1 || i == 5) && ft_atoi_unsigned(argv[i]) == 0)
+		if (((i == 1 || i == 5) && ft_atoi_unsigned(argv[i]) == 0)
+			|| check_overflow(argv[i]))
 			return (print_error());
 		i++;
 	}
 	return (1);
+}
+
+unsigned long int	timestamp(t_philo *p)
+{
+	return (sys_timestamp() - p->timestamp_start);
 }
