@@ -22,14 +22,14 @@ void	init_threads(t_philo *p, pthread_t *monitor, pthread_t *death)
 		free(p);
 		exit(4);
 	}
+	if (pthread_detach(*death) != 0)
+		printf("Error detaching death thread\n");
+	if (pthread_detach(*monitor) != 0)
+		printf("Error detaching monitor thread\n");
 }
 
-void	join_threads(t_philo *p, pthread_t monitor, pthread_t death)
+void	free_resources(t_philo *p)
 {
-	if (pthread_detach(death) != 0)
-		printf("Error detaching death thread\n");
-	if (pthread_join(monitor, 0) != 0)
-		printf("Error joining monitor thread\n");
 	sem_close(p->time);
 	free(p->pids);
 	free(p);
@@ -42,13 +42,10 @@ void	philosopher_odd(t_philo *p)
 	pthread_t	death;
 
 	init_threads(p, &monitor, &death);
-	sem_wait(p->time);
 	while (p->must_eat)
 	{
-		sem_post(p->time);
 		sem_wait(p->forks);
-		printf("%lu %u has taken a fork\n", timestamp(p), p->i + 1);
-		fflush(0);
+		philo_print(p, "has taken a fork");
 		sem_wait(p->forks);
 		eat(p);
 		if (p->must_eat)
@@ -56,10 +53,9 @@ void	philosopher_odd(t_philo *p)
 			philo_sleep(p);
 			think(p);
 		}
-		sem_wait(p->time);
 	}
-	sem_post(p->time);
-	join_threads(p, monitor, death);
+	free_resources(p);
+	exit(0);
 }
 
 void	philosopher_even(t_philo *p)
@@ -68,22 +64,18 @@ void	philosopher_even(t_philo *p)
 	pthread_t	death;
 
 	init_threads(p, &monitor, &death);
-	sem_wait(p->time);
 	while (p->must_eat)
 	{
-		sem_post(p->time);
 		philo_sleep(p);
 		sem_wait(p->forks);
-		printf("%lu %u has a taken fork\n", timestamp(p), p->i + 1);
-		fflush(0);
+		philo_print(p, "has taken a fork");
 		sem_wait(p->forks);
 		eat(p);
 		if (p->must_eat)
 			think(p);
-		sem_wait(p->time);
 	}
-	sem_post(p->time);
-	join_threads(p, monitor, death);
+	free_resources(p);
+	exit(0);
 }
 
 void	*philosopher(void *arg)

@@ -16,6 +16,7 @@ void	open_semaphores(t_philo *p)
 {
 	sem_t	*forks;
 	sem_t	*death;
+	sem_t	*print;
 	char	name[32];
 
 	ft_strlcpy(name, "/time", 6);
@@ -26,23 +27,13 @@ void	open_semaphores(t_philo *p)
 		free_philo(p, 1);
 	forks = sem_open("/forks", 0);
 	death = sem_open("/death", 0);
-	if (forks == SEM_FAILED || death == SEM_FAILED || p->time == SEM_FAILED)
+	print = sem_open("/print", 0);
+	if (forks == SEM_FAILED || death == SEM_FAILED || p->time == SEM_FAILED
+		|| print == SEM_FAILED)
 		free_philo(p, 1);
 	p->forks = forks;
 	p->death = death;
-}
-
-void	*ft_death(void *arg)
-{
-	t_philo	*p;
-
-	p = (t_philo *)arg;
-	sem_wait(p->death);
-	sem_post(p->death);
-	free(p->pids);
-	free(p);
-	exit(0);
-	return (0);
+	p->print = print;
 }
 
 int	check_input(int argc, char **argv)
@@ -68,6 +59,13 @@ int	check_input(int argc, char **argv)
 		i++;
 	}
 	return (1);
+}
+
+void	philo_print(t_philo *p, char *action)
+{
+	sem_wait(p->print);
+	printf("%lu %u %s\n", timestamp(p), p->i + 1, action);
+	sem_post(p->print);
 }
 
 unsigned long int	timestamp(t_philo *p)

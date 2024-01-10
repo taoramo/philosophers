@@ -33,6 +33,7 @@ typedef struct s_philo {
 	sem_t				*forks;
 	sem_t				*time;
 	sem_t				*death;
+	sem_t				*print;
 }	t_philo;
 unsigned int		ft_atoi_unsigned(const char *str);
 int					free_philo(t_philo *arr, int exit);
@@ -52,4 +53,5 @@ int					check_overflow(const char *str);
 void				open_semaphores(t_philo *p);
 char				*ft_utoa(unsigned int nb, char *dst);
 size_t				ft_strlcpy(char *dst, const char *str, size_t size);
+void				philo_print(t_philo *p, char *action);
 #endif
