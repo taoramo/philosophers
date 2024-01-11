@@ -5,7 +5,9 @@ SRCS = philo_utils_bonus2.c ft_atoi_unsigned_bonus.c philo_bonus.c philo_actions
 INCLUDES = philo_bonus.h
 OBJS = $(SRCS:.c=.o)
 
-all: $(NAME)
+all: bonus
+
+bonus: $(NAME)
 
 $(NAME) : $(OBJS)
 	cc $(CFLAGS) $(OBJS) -o $(NAME)
