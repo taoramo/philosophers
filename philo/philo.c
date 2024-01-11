@@ -28,6 +28,7 @@ t_philo	**init_philo_values(int argc, char **argv, t_philo **arr)
 		if (argc == 6)
 			arr[i]->must_eat = ft_atoi_unsigned(argv[5]);
 		arr[i]->i = i;
+		arr[0]->forks[i] = 0;
 		i++;
 	}
 	return (arr);
@@ -60,26 +61,26 @@ int	init_muteces(t_philo **arr, unsigned int n)
 
 t_philo	**init_philo_ptrs(unsigned int n)
 {
-	int				*death;
-	pthread_t		*threads;
-	pthread_mutex_t	*muteces;
 	t_philo			**arr;
 	unsigned int	i;
 
 	arr = malloc(sizeof(t_philo *) * n);
-	death = (int *)malloc(sizeof(int *));
-	threads = malloc(sizeof(pthread_t) * (n + 1));
-	muteces = malloc(sizeof(pthread_mutex_t) * n);
-	*death = 0;
-	if (check_malloc(arr, death, threads, muteces) == 0)
+	arr[0] = malloc(sizeof(t_philo));
+	arr[0]->death = (int *)malloc(sizeof(int *));
+	arr[0]->threads = malloc(sizeof(pthread_t) * (n + 1));
+	arr[0]->muteces = malloc(sizeof(pthread_mutex_t) * n);
+	arr[0]->forks = malloc(sizeof(int) * n);
+	*arr[0]->death = 0;
+	if (check_malloc(arr) == 0)
 		return (0);
-	i = 0;
+	i = 1;
 	while (i < n)
 	{
 		arr[i] = malloc(sizeof(t_philo));
-		arr[i]->death = death;
-		arr[i]->threads = threads;
-		arr[i]->muteces = muteces;
+		arr[i]->death = arr[0]->death;
+		arr[i]->threads = arr[0]->threads;
+		arr[i]->muteces = arr[0]->muteces;
+		arr[i]->forks = arr[0]->forks;
 		i++;
 	}
 	init_muteces(arr, n);
@@ -101,12 +102,17 @@ int	manage_threads(t_philo **arr, char **argv)
 	if (pthread_create(&arr[0]->threads[i], 0, &philo_monitor, arr) != 0)
 		return (free_philo(arr, 2, ft_atoi_unsigned(argv[1])));
 	i = 0;
-	while (i < arr[0]->n + 1)
+	while (i < arr[0]->n)
 	{
 		if (pthread_join(arr[0]->threads[i], 0) != 0)
 			return (free_philo(arr, 3, ft_atoi_unsigned(argv[1])));
 		i++;
 	}
+	pthread_mutex_lock(arr[0]->death_mutex);
+	*arr[0]->death = 1;
+	pthread_mutex_unlock(arr[0]->death_mutex);
+	if (pthread_join(arr[0]->threads[arr[0]->n], 0) != 0)
+		return (free_philo(arr, 3, ft_atoi_unsigned(argv[1])));
 	return (free_philo(arr, 0, ft_atoi_unsigned(argv[1])));
 }
 

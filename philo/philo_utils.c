@@ -12,19 +12,29 @@
 
 #include "philo.h"
 
-int	check_malloc(t_philo **a, int *d, pthread_t *t, pthread_mutex_t *m)
+int	check_malloc(t_philo **a)
 {
-	if (!a || !d || !t || !m)
+	if (!a)
+		return (0);
+	if (!a[0])
+	{
+		free(a);
+		return (0);
+	}
+	if (a && a[0] && (!a[0]->death || !a[0]->threads
+			|| !a[0]->muteces || !a[0]->forks))
 	{
 		printf("error allocating memory\n");
-		if (a)
-			free(a);
-		if (d)
-			free(d);
-		if (t)
-			free(t);
-		if (m)
-			free(m);
+		if (a[0]->death)
+			free(a[0]->death);
+		if (a[0]->threads)
+			free(a[0]->threads);
+		if (a[0]->forks)
+			free(a[0]->forks);
+		if (a[0]->muteces)
+			pthread_mutex_destroy(a[0]->muteces);
+		free(a[0]);
+		free(a);
 		return (0);
 	}
 	else
@@ -68,17 +78,17 @@ void	free_philo_arr(t_philo **arr, unsigned int n)
 
 	if (arr[0]->threads)
 		free(arr[0]->threads);
-	if (arr[0]->muteces)
-		free(arr[0]->muteces);
 	if (arr[0]->death)
 		free(arr[0]->death);
 	if (arr[0]->time_mutex)
-		free(arr[0]->time_mutex);
+		pthread_mutex_destroy(arr[0]->time_mutex);
 	if (arr[0]->death_mutex)
-		free(arr[0]->death_mutex);
+		pthread_mutex_destroy(arr[0]->death_mutex);
 	i = 0;
 	while (i < n)
 	{
+		if (&arr[0]->muteces[i])
+			pthread_mutex_destroy(&arr[0]->muteces[i]);
 		if (arr[i])
 			free(arr[i]);
 		i++;

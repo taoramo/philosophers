@@ -47,8 +47,7 @@ void				think(t_philo *p);
 int					print_error(void);
 int					is_dead(t_philo *p);
 void				set_start_time(t_philo **arr);
-int					check_malloc(t_philo **arr, int *d,
-						pthread_t *t, pthread_mutex_t *m);
+int					check_malloc(t_philo **arr);
 int					check_input(int argc, char **argv);
 int					check_overflow(const char *str);
 #endif
