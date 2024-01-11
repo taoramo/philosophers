@@ -101,12 +101,17 @@ int	manage_threads(t_philo **arr, char **argv)
 	if (pthread_create(&arr[0]->threads[i], 0, &philo_monitor, arr) != 0)
 		return (free_philo(arr, 2, ft_atoi_unsigned(argv[1])));
 	i = 0;
-	while (i < arr[0]->n + 1)
+	while (i < arr[0]->n)
 	{
 		if (pthread_join(arr[0]->threads[i], 0) != 0)
 			return (free_philo(arr, 3, ft_atoi_unsigned(argv[1])));
 		i++;
 	}
+	pthread_mutex_lock(arr[0]->death_mutex);
+	*arr[0]->death = 1;
+	pthread_mutex_unlock(arr[0]->death_mutex);
+	if (pthread_detach(arr[0]->threads[arr[0]->n]) != 0)
+		return (free_philo(arr, 3, ft_atoi_unsigned(argv[1])));
 	return (free_philo(arr, 0, ft_atoi_unsigned(argv[1])));
 }
 

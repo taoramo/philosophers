@@ -68,17 +68,17 @@ void	free_philo_arr(t_philo **arr, unsigned int n)
 
 	if (arr[0]->threads)
 		free(arr[0]->threads);
-	if (arr[0]->muteces)
-		free(arr[0]->muteces);
 	if (arr[0]->death)
 		free(arr[0]->death);
 	if (arr[0]->time_mutex)
-		free(arr[0]->time_mutex);
+		pthread_mutex_destroy(arr[0]->time_mutex);
 	if (arr[0]->death_mutex)
-		free(arr[0]->death_mutex);
+		pthread_mutex_destroy(arr[0]->death_mutex);
 	i = 0;
 	while (i < n)
 	{
+		if (&arr[0]->muteces[i])
+			pthread_mutex_destroy(&arr[0]->muteces[i]);
 		if (arr[i])
 			free(arr[i]);
 		i++;
