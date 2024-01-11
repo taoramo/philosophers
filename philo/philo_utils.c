@@ -72,6 +72,20 @@ int	print_error(void)
 	return (0);
 }
 
+void	destroy_muteces(t_philo **arr, unsigned int n)
+{
+	unsigned int	i;
+
+	pthread_mutex_destroy(arr[0]->death_mutex);
+	i = 0;
+	while (i < n)
+	{
+		pthread_mutex_destroy(&arr[0]->muteces[i]);
+		pthread_mutex_destroy(&arr[0]->time_mutex[i]);
+		i++;
+	}
+}
+
 void	free_philo_arr(t_philo **arr, unsigned int n)
 {
 	unsigned int	i;
@@ -81,14 +95,16 @@ void	free_philo_arr(t_philo **arr, unsigned int n)
 	if (arr[0]->death)
 		free(arr[0]->death);
 	if (arr[0]->time_mutex)
-		pthread_mutex_destroy(arr[0]->time_mutex);
+		free(arr[0]->time_mutex);
 	if (arr[0]->death_mutex)
-		pthread_mutex_destroy(arr[0]->death_mutex);
+		free(arr[0]->death_mutex);
+	if (arr[0]->muteces)
+		free(arr[0]->muteces);
+	if (arr[0]->forks)
+		free(arr[0]->forks);
 	i = 0;
 	while (i < n)
 	{
-		if (&arr[0]->muteces[i])
-			pthread_mutex_destroy(&arr[0]->muteces[i]);
 		if (arr[i])
 			free(arr[i]);
 		i++;
