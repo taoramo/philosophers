@@ -62,6 +62,6 @@ void	*philo_monitor(void *arg)
 			return (0);
 		if (check_death(arr))
 			return (0);
-		usleep(1000);
+		usleep(2000);
 	}
 }
