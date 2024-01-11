@@ -14,16 +14,16 @@
 
 void	eat(t_philo *p)
 {
-	printf("%lu %u is eating\n", timestamp(p), p->i + 1);
-	fflush(0);
+	sem_wait(p->print);
+	printf("%lu %u has taken a fork\n%lu %u is eating\n",
+		timestamp(p), p->i + 1, timestamp(p), p->i + 1);
+	sem_post(p->print);
 	sem_wait(p->time);
 	p->timestamp_eat = timestamp(p);
 	sem_post(p->time);
 	ft_usleep(p->time_eat);
-	sem_wait(p->time);
 	if (p->must_eat > 0)
 		p->must_eat = p->must_eat - 1;
-	sem_post(p->time);
 	sem_post(p->forks);
 	sem_post(p->forks);
 	return ;
@@ -31,15 +31,13 @@ void	eat(t_philo *p)
 
 void	philo_sleep(t_philo *p)
 {
-	printf("%lu %u is sleeping\n", timestamp(p), p->i + 1);
-	fflush(0);
+	philo_print(p, "is sleeping");
 	ft_usleep(p->time_sleep);
 	return ;
 }
 
 void	think(t_philo *p)
 {
-	printf("%lu %u is thinking\n", timestamp(p), p->i + 1);
-	fflush(0);
+	philo_print(p, "is thinking");
 	return ;
 }

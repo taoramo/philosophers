@@ -91,22 +91,21 @@ void	init_processes(t_philo *p, int n)
 int	main(int argc, char **argv)
 {
 	t_philo			*p;
-	sem_t			*death;
 
 	sem_unlink("/forks");
 	sem_unlink("/death");
+	sem_unlink("/print");
 	if (!check_input(argc, argv))
 		return (0);
 	if (sem_open("/forks", O_CREAT, 0666,
 			ft_atoi_unsigned(argv[1])) == SEM_FAILED
-		|| sem_open("/death", O_CREAT, 0666, 0) == SEM_FAILED)
+		|| sem_open("/death", O_CREAT, 0666, 0) == SEM_FAILED
+		|| sem_open("/print", O_CREAT, 0666, 1) == SEM_FAILED)
 		free_philo(0, 1);
 	p = init_philo_ptrs(ft_atoi_unsigned(argv[1]));
 	if (!p)
 		return (free_philo(p, 3));
 	p = init_philo_values(argc, argv, p);
 	init_processes(p, ft_atoi_unsigned(argv[1]));
-	death = sem_open("/death", 0);
-	sem_post(death);
 	return (free_philo(p, 0));
 }

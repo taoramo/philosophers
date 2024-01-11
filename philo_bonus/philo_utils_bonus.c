@@ -51,19 +51,16 @@ void	init_pids(int *pids, int n)
 
 int	free_philo(t_philo *p, int exitnum)
 {
-	sem_t	*forks;
-	sem_t	*death;
-
 	if (exitnum == 1)
 		printf("error creating semaphores\n");
 	if (exitnum == 2)
 		printf("error forking\n");
-	forks = sem_open("/forks", 0);
-	death = sem_open("/death", 0);
-	sem_close(forks);
+	sem_close(p->forks);
 	sem_unlink("/forks");
-	sem_close(death);
+	sem_close(p->death);
 	sem_unlink("/death");
+	sem_close(p->print);
+	sem_unlink("/print");
 	if (!p)
 		exit(exitnum);
 	free(p->pids);
