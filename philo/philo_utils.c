@@ -12,35 +12,6 @@
 
 #include "philo.h"
 
-int	check_malloc(t_philo **a)
-{
-	if (!a)
-		return (0);
-	if (!a[0])
-	{
-		free(a);
-		return (0);
-	}
-	if (a && a[0] && (!a[0]->death || !a[0]->threads
-			|| !a[0]->muteces || !a[0]->forks))
-	{
-		printf("error allocating memory\n");
-		if (a[0]->death)
-			free(a[0]->death);
-		if (a[0]->threads)
-			free(a[0]->threads);
-		if (a[0]->forks)
-			free(a[0]->forks);
-		if (a[0]->muteces)
-			pthread_mutex_destroy(a[0]->muteces);
-		free(a[0]);
-		free(a);
-		return (0);
-	}
-	else
-		return (1);
-}
-
 int	check_input(int argc, char **argv)
 {
 	int	i;
@@ -114,6 +85,7 @@ void	free_philo_arr(t_philo **arr, unsigned int n)
 
 int	free_philo(t_philo **arr, int exit, unsigned int n)
 {
+	destroy_muteces(arr, n);
 	if (arr)
 		free_philo_arr(arr, n);
 	if (exit == 2)
