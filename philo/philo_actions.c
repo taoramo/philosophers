@@ -20,6 +20,7 @@ void	eat(t_philo *p)
 		pthread_mutex_unlock(&p->muteces[(p->i + 1) % p->n]);
 		return ;
 	}
+	p->forks[(p->i + 1) % p->n]++;
 	printf("%lu %u has taken a fork\n", timestamp(p), p->i + 1);
 	printf("%lu %u is eating\n", timestamp(p), p->i + 1);
 	pthread_mutex_lock(&p->time_mutex[p->i]);
@@ -28,6 +29,8 @@ void	eat(t_philo *p)
 		p->must_eat = p->must_eat - 1;
 	pthread_mutex_unlock(&p->time_mutex[p->i]);
 	ft_usleep(p->time_eat);
+	p->forks[p->i] = 0;
+	p->forks[(p->i + 1) % p->n] = 0;
 	pthread_mutex_unlock(&p->muteces[p->i]);
 	pthread_mutex_unlock(&p->muteces[(p->i + 1) % p->n]);
 }
