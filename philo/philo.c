@@ -40,7 +40,7 @@ int	init_muteces(t_philo **arr, unsigned int n)
 	pthread_mutex_t	*time_mutex;
 	unsigned int	i;
 
-	death_mutex = malloc(sizeof(pthread_mutex_t *));
+	death_mutex = malloc(sizeof(pthread_mutex_t));
 	time_mutex = malloc(sizeof(pthread_mutex_t) * n);
 	if (!death_mutex || !time_mutex)
 		return (free_philo(arr, 4, n));

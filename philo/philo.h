@@ -18,7 +18,8 @@
 # include <sys/time.h>
 # include <stdio.h>
 
-typedef struct s_philo {
+typedef struct s_philo
+{
 	unsigned int		time_die;
 	unsigned int		time_sleep;
 	unsigned int		time_eat;
