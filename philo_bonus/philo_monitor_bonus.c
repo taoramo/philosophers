@@ -14,16 +14,13 @@
 
 int	check_death(t_philo *p)
 {
-	sem_t	*death;
-
-	death = sem_open("/death", 0);
 	sem_wait(p->time);
 	if (timestamp(p) - p->timestamp_eat > p->time_die)
 	{
 		sem_post(p->time);
 		sem_wait(p->print);
 		printf("%lu %u has died\n", timestamp(p), p->i + 1);
-		sem_post(death);
+		sem_post(p->death);
 		return (1);
 	}
 	sem_post(p->time);
@@ -46,16 +43,10 @@ void	*philo_monitor(void *arg)
 void	*ft_death(void *arg)
 {
 	t_philo	*p;
-	int		i;
 
 	p = (t_philo *)arg;
 	sem_wait(p->death);
-	i = 0;
-	while (i < p->n)
-	{
-		sem_post(p->death);
-		i++;
-	}
+	sem_post(p->death);
 	free(p->pids);
 	free(p);
 	sem_close(p->time);
