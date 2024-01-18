@@ -26,7 +26,10 @@ int	check_input(int argc, char **argv)
 		while (argv[i][j])
 		{
 			if (argv[i][j] < 48 || argv[i][j] > 57)
+			{
+				print_error();
 				return (0);
+			}
 			j++;
 		}
 		if (((i == 1 || i == 5) && ft_atoi_unsigned(argv[i]) == 0)

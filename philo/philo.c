@@ -64,8 +64,9 @@ t_philo	**init_philo_ptrs(unsigned int n)
 	t_philo			**arr;
 	unsigned int	i;
 
-	arr = malloc(sizeof(t_philo *) * n);
-	arr[0] = malloc(sizeof(t_philo));
+	arr = init_arr_and_structs(n);
+	if (!arr)
+		return (0);
 	arr[0]->death = (int *)malloc(sizeof(int *));
 	arr[0]->threads = malloc(sizeof(pthread_t) * (n + 1));
 	arr[0]->muteces = malloc(sizeof(pthread_mutex_t) * n);
@@ -76,7 +77,6 @@ t_philo	**init_philo_ptrs(unsigned int n)
 	i = 1;
 	while (i < n)
 	{
-		arr[i] = malloc(sizeof(t_philo));
 		arr[i]->death = arr[0]->death;
 		arr[i]->threads = arr[0]->threads;
 		arr[i]->muteces = arr[0]->muteces;

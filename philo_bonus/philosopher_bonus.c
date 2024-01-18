@@ -42,6 +42,7 @@ void	philosopher_odd(t_philo *p)
 	pthread_t	death;
 
 	init_threads(p, &monitor, &death);
+	think(p);
 	while (p->must_eat)
 	{
 		sem_wait(p->forks);
@@ -98,7 +99,7 @@ void	*philosopher(void *arg)
 		if (p->i == i && i % 2 == 1)
 			philosopher_odd(p);
 		if (p->i == i && i % 2 == 0)
-			philosopher_even(p);
+			philosopher_odd(p);
 		i++;
 	}
 	free(p->pids);

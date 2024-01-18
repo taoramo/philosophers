@@ -53,9 +53,9 @@ t_philo	*init_philo_ptrs(unsigned int n)
 
 	p = malloc(sizeof(t_philo));
 	pids = malloc(sizeof(int) * (n + 1));
-	init_pids(pids, n);
 	if (check_malloc(p, pids) == 0)
 		return (0);
+	init_pids(pids, n);
 	i = 0;
 	while (i < n)
 	{

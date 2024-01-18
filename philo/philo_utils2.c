@@ -40,3 +40,31 @@ int	check_malloc(t_philo **a)
 	else
 		return (1);
 }
+
+t_philo	**init_arr_and_structs(unsigned int n)
+{
+	unsigned int		i;
+	t_philo				**arr;
+
+	arr = malloc(sizeof(t_philo *) * n);
+	if (! arr)
+		return (0);
+	i = 0;
+	while (i < n)
+	{
+		arr[i] = malloc(sizeof(t_philo));
+		if (!arr[i])
+		{
+			i--;
+			while (i)
+			{
+				free(arr[i]);
+				i--;
+			}
+			free(arr);
+			return (0);
+		}
+		i++;
+	}
+	return (arr);
+}

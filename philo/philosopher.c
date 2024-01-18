@@ -39,9 +39,10 @@ void	philosopher_even(t_philo *p)
 {
 	while (p->must_eat)
 	{
+		philo_sleep(p);
 		if (is_dead(p))
 			break ;
-		philo_sleep(p);
+		think(p);
 		pthread_mutex_lock(&p->muteces[p->i]);
 		if (is_dead(p))
 		{
@@ -54,7 +55,6 @@ void	philosopher_even(t_philo *p)
 		eat(p);
 		if (is_dead(p) || p->must_eat == 0)
 			break ;
-		think(p);
 	}
 }
 

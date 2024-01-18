@@ -51,4 +51,5 @@ void				set_start_time(t_philo **arr);
 int					check_malloc(t_philo **arr);
 int					check_input(int argc, char **argv);
 int					check_overflow(const char *str);
+t_philo				**init_arr_and_structs(unsigned int n);
 #endif

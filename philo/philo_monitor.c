@@ -40,7 +40,7 @@ int	check_death(t_philo **arr)
 			pthread_mutex_lock(arr[0]->death_mutex);
 			*arr[0]->death = 1;
 			pthread_mutex_unlock(arr[0]->death_mutex);
-			printf("%lu %u has died\n", timestamp(arr[0]), i + 1);
+			printf("%lu %u died\n", timestamp(arr[0]), i + 1);
 			result = 1;
 			break ;
 		}

@@ -19,7 +19,7 @@ int	check_death(t_philo *p)
 	{
 		sem_post(p->time);
 		sem_wait(p->print);
-		printf("%lu %u has died\n", timestamp(p), p->i + 1);
+		printf("%lu %u died\n", timestamp(p), p->i + 1);
 		sem_post(p->death);
 		return (1);
 	}
