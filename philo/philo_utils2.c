@@ -56,7 +56,7 @@ t_philo	**init_arr_and_structs(unsigned int n)
 		if (!arr[i])
 		{
 			i--;
-			while (i)
+			while (i >= 0)
 			{
 				free(arr[i]);
 				i--;
