@@ -36,7 +36,7 @@ void	free_resources(t_philo *p)
 	exit(0);
 }
 
-void	philosopher_odd(t_philo *p)
+void	philosopher_routine(t_philo *p)
 {
 	pthread_t	monitor;
 	pthread_t	death;
@@ -54,26 +54,6 @@ void	philosopher_odd(t_philo *p)
 			philo_sleep(p);
 			think(p);
 		}
-	}
-	free_resources(p);
-	exit(0);
-}
-
-void	philosopher_even(t_philo *p)
-{
-	pthread_t	monitor;
-	pthread_t	death;
-
-	init_threads(p, &monitor, &death);
-	while (p->must_eat)
-	{
-		philo_sleep(p);
-		sem_wait(p->forks);
-		philo_print(p, "has taken a fork");
-		sem_wait(p->forks);
-		eat(p);
-		if (p->must_eat)
-			think(p);
 	}
 	free_resources(p);
 	exit(0);
@@ -97,9 +77,9 @@ void	*philosopher(void *arg)
 	while (i < p->n)
 	{
 		if (p->i == i && i % 2 == 1)
-			philosopher_odd(p);
+			philosopher_routine(p);
 		if (p->i == i && i % 2 == 0)
-			philosopher_odd(p);
+			philosopher_routine(p);
 		i++;
 	}
 	free(p->pids);
