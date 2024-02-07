@@ -14,14 +14,29 @@
 
 int	is_finished(t_philo **arr)
 {
-	pthread_mutex_lock(arr[0]->death_mutex);
-	if (*arr[0]->death == 1)
+	unsigned int	i;
+	int				result;
+
+	i = 0;
+	result = 1;
+	while (i < arr[0]->n)
 	{
-		pthread_mutex_unlock(arr[0]->death_mutex);
-		return (1);
+		pthread_mutex_lock(&arr[i]->time_mutex[i]);
+		if (arr[i]->must_eat > 0)
+		{
+			pthread_mutex_unlock(&arr[i]->time_mutex[i]);
+			result = 0;
+		}
+		pthread_mutex_unlock(&arr[i]->time_mutex[i]);
+		i++;
 	}
-	pthread_mutex_unlock(arr[0]->death_mutex);
-	return (0);
+	if (result == 1)
+	{
+		pthread_mutex_lock(arr[0]->death_mutex);
+		*arr[0]->death = 1;
+		pthread_mutex_unlock(arr[0]->death_mutex);
+	}
+	return (result);
 }
 
 int	check_death(t_philo **arr)

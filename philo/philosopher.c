@@ -14,7 +14,7 @@
 
 void	philosopher_odd(t_philo *p)
 {
-	while (p->must_eat)
+	while (1)
 	{
 		pthread_mutex_lock(&p->muteces[p->i]);
 		if (is_dead(p))
@@ -37,7 +37,7 @@ void	philosopher_odd(t_philo *p)
 
 void	philosopher_even(t_philo *p)
 {
-	while (p->must_eat)
+	while (1)
 	{
 		philo_sleep(p);
 		if (is_dead(p))
@@ -60,7 +60,7 @@ void	philosopher_even(t_philo *p)
 
 void	philosopher_alone(t_philo *p)
 {
-	while (p->must_eat)
+	while (1)
 	{
 		if (is_dead(p))
 			break ;
