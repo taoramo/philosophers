@@ -25,8 +25,7 @@ void	eat(t_philo *p)
 	printf("%lu %u is eating\n", timestamp(p), p->i + 1);
 	pthread_mutex_lock(&p->time_mutex[p->i]);
 	p->timestamp_eat = timestamp(p);
-	if (p->must_eat > 0)
-		p->must_eat = p->must_eat - 1;
+	p->must_eat = p->must_eat - 1;
 	pthread_mutex_unlock(&p->time_mutex[p->i]);
 	ft_usleep(p->time_eat);
 	p->forks[p->i] = 0;

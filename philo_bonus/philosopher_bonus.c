@@ -43,17 +43,14 @@ void	philosopher_routine(t_philo *p)
 
 	init_threads(p, &monitor, &death);
 	think(p);
-	while (p->must_eat)
+	while (1)
 	{
 		sem_wait(p->forks);
 		philo_print(p, "has taken a fork");
 		sem_wait(p->forks);
 		eat(p);
-		if (p->must_eat)
-		{
-			philo_sleep(p);
-			think(p);
-		}
+		philo_sleep(p);
+		think(p);
 	}
 	free_resources(p);
 	exit(0);
@@ -74,16 +71,6 @@ void	*philosopher(void *arg)
 	}
 	open_semaphores(p);
 	i = 0;
-	while (i < p->n)
-	{
-		if (p->i == i && i % 2 == 1)
-			philosopher_routine(p);
-		if (p->i == i && i % 2 == 0)
-			philosopher_routine(p);
-		i++;
-	}
-	free(p->pids);
-	free(p);
-	exit(0);
+	philosopher_routine(p);
 	return (0);
 }

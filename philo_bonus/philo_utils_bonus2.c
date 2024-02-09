@@ -15,7 +15,6 @@
 void	open_semaphores(t_philo *p)
 {
 	sem_t	*forks;
-	sem_t	*death;
 	sem_t	*print;
 	char	name[32];
 
@@ -26,13 +25,10 @@ void	open_semaphores(t_philo *p)
 	if (p->time == SEM_FAILED)
 		free_philo(p, 1);
 	forks = sem_open("/forks", 0);
-	death = sem_open("/death", 0);
 	print = sem_open("/print", 0);
-	if (forks == SEM_FAILED || death == SEM_FAILED || p->time == SEM_FAILED
-		|| print == SEM_FAILED)
+	if (forks == SEM_FAILED || p->time == SEM_FAILED || print == SEM_FAILED) 
 		free_philo(p, 1);
 	p->forks = forks;
-	p->death = death;
 	p->print = print;
 }
 

@@ -35,6 +35,7 @@ typedef struct s_philo
 	sem_t				*time;
 	sem_t				*death;
 	sem_t				*print;
+	sem_t				*done;
 }	t_philo;
 unsigned int		ft_atoi_unsigned(const char *str);
 int					free_philo(t_philo *arr, int exit);

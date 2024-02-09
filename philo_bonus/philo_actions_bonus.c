@@ -22,8 +22,9 @@ void	eat(t_philo *p)
 	p->timestamp_eat = timestamp(p);
 	sem_post(p->time);
 	ft_usleep(p->time_eat);
-	if (p->must_eat > 0)
-		p->must_eat = p->must_eat - 1;
+	p->must_eat = p->must_eat - 1;
+	if (p->must_eat == 0)
+		sem_post(p->done);
 	sem_post(p->forks);
 	sem_post(p->forks);
 	return ;

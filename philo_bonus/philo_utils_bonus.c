@@ -61,6 +61,8 @@ int	free_philo(t_philo *p, int exitnum)
 	sem_unlink("/death");
 	sem_close(p->print);
 	sem_unlink("/print");
+	sem_close(p->done);
+	sem_unlink("/done");
 	if (!p)
 		exit(exitnum);
 	free(p->pids);

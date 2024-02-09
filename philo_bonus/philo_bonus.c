@@ -12,10 +12,12 @@
 
 #include "philo_bonus.h"
 
-t_philo	*init_philo_values(int argc, char **argv, t_philo *p)
+t_philo	*init_philo_values(int argc, char **argv, t_philo *p, sem_t *done, sem_t *death)
 {
 	if (p)
 	{
+		p->done = done;
+		p->death = death;
 		p->n = ft_atoi_unsigned(argv[1]);
 		p->time_die = ft_atoi_unsigned(argv[2]);
 		p->time_eat = ft_atoi_unsigned(argv[3]);
@@ -65,7 +67,7 @@ t_philo	*init_philo_ptrs(unsigned int n)
 	return (p);
 }
 
-void	init_processes(t_philo *p, int n)
+void	init_processes(t_philo *p, int n, sem_t *done, sem_t *death)
 {
 	int		i;
 
@@ -83,6 +85,16 @@ void	init_processes(t_philo *p, int n)
 		}
 		i++;
 	}
+	if (p->must_eat > 0)
+	{
+		i = 0;
+		while (i < p->n)
+		{
+			sem_wait(done);
+			i++;
+		}
+		sem_post(death);
+	}
 	i = 0;
 	while (i < p->n)
 		waitpid(p->pids[i++], 0, 0);
@@ -90,22 +102,26 @@ void	init_processes(t_philo *p, int n)
 
 int	main(int argc, char **argv)
 {
-	t_philo			*p;
+	t_philo	*p;
+	sem_t	*done;		
+	sem_t	*death;
 
 	sem_unlink("/forks");
 	sem_unlink("/death");
 	sem_unlink("/print");
+	sem_unlink("/done");
 	if (!check_input(argc, argv))
 		return (0);
+	done = sem_open("/done", O_CREAT, 0666, 0);
+	death = sem_open("/death", O_CREAT, 0666, 0);
 	if (sem_open("/forks", O_CREAT, 0666,
 			ft_atoi_unsigned(argv[1])) == SEM_FAILED
-		|| sem_open("/death", O_CREAT, 0666, 0) == SEM_FAILED
-		|| sem_open("/print", O_CREAT, 0666, 1) == SEM_FAILED)
+		|| sem_open("/print", O_CREAT, 0666, 1) == SEM_FAILED || done == SEM_FAILED)
 		free_philo(0, 1);
 	p = init_philo_ptrs(ft_atoi_unsigned(argv[1]));
 	if (!p)
 		return (free_philo(p, 3));
-	p = init_philo_values(argc, argv, p);
-	init_processes(p, ft_atoi_unsigned(argv[1]));
+	p = init_philo_values(argc, argv, p, done, death);
+	init_processes(p, ft_atoi_unsigned(argv[1]), done, death);
 	return (free_philo(p, 0));
 }
