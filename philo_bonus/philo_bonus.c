@@ -12,12 +12,10 @@
 
 #include "philo_bonus.h"
 
-t_philo	*init_philo_values(int argc, char **argv, t_philo *p, sem_t *done, sem_t *death)
+t_philo	*init_philo_values(int argc, char **argv, t_philo *p)
 {
 	if (p)
 	{
-		p->done = done;
-		p->death = death;
 		p->n = ft_atoi_unsigned(argv[1]);
 		p->time_die = ft_atoi_unsigned(argv[2]);
 		p->time_eat = ft_atoi_unsigned(argv[3]);
@@ -32,39 +30,33 @@ t_philo	*init_philo_values(int argc, char **argv, t_philo *p, sem_t *done, sem_t
 	return (p);
 }
 
-int	check_malloc(t_philo *a, int *p)
-{
-	if (!a || !p)
-	{
-		printf("Error allocating memory\n");
-		if (a)
-			free(a);
-		if (p)
-			free(p);
-		return (0);
-	}
-	else
-		return (1);
-}
-
-t_philo	*init_philo_ptrs(unsigned int n)
+t_philo	*init_philo_ptrs(unsigned int n, sem_t *done, sem_t *death)
 {
 	int				*pids;
 	t_philo			*p;
-	unsigned int	i;
 
 	p = malloc(sizeof(t_philo));
 	pids = malloc(sizeof(int) * (n + 1));
 	if (check_malloc(p, pids) == 0)
 		return (0);
 	init_pids(pids, n);
+	p->pids = pids;
+	p->done = done;
+	p->death = death;
+	return (p);
+}
+
+void	wait_until_done(t_philo *p, sem_t *done, sem_t *death)
+{
+	int		i;
+
 	i = 0;
-	while (i < n)
+	while (i < p->n)
 	{
-		p->pids = pids;
+		sem_wait(done);
 		i++;
 	}
-	return (p);
+	sem_post(death);
 }
 
 void	init_processes(t_philo *p, int n, sem_t *done, sem_t *death)
@@ -86,15 +78,7 @@ void	init_processes(t_philo *p, int n, sem_t *done, sem_t *death)
 		i++;
 	}
 	if (p->must_eat > 0)
-	{
-		i = 0;
-		while (i < p->n)
-		{
-			sem_wait(done);
-			i++;
-		}
-		sem_post(death);
-	}
+		wait_until_done(p, done, death);
 	i = 0;
 	while (i < p->n)
 		waitpid(p->pids[i++], 0, 0);
@@ -116,12 +100,13 @@ int	main(int argc, char **argv)
 	death = sem_open("/death", O_CREAT, 0666, 0);
 	if (sem_open("/forks", O_CREAT, 0666,
 			ft_atoi_unsigned(argv[1])) == SEM_FAILED
-		|| sem_open("/print", O_CREAT, 0666, 1) == SEM_FAILED || done == SEM_FAILED)
+		|| sem_open("/print", O_CREAT, 0666, 1) == SEM_FAILED
+		|| done == SEM_FAILED)
 		free_philo(0, 1);
-	p = init_philo_ptrs(ft_atoi_unsigned(argv[1]));
+	p = init_philo_ptrs(ft_atoi_unsigned(argv[1]), done, death);
 	if (!p)
 		return (free_philo(p, 3));
-	p = init_philo_values(argc, argv, p, done, death);
+	p = init_philo_values(argc, argv, p);
 	init_processes(p, ft_atoi_unsigned(argv[1]), done, death);
 	return (free_philo(p, 0));
 }

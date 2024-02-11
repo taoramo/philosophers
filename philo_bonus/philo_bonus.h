@@ -56,4 +56,5 @@ void				open_semaphores(t_philo *p);
 char				*ft_utoa(unsigned int nb, char *dst);
 size_t				ft_strlcpy(char *dst, const char *str, size_t size);
 void				philo_print(t_philo *p, char *action);
+int					check_malloc(t_philo *a, int *p);
 #endif

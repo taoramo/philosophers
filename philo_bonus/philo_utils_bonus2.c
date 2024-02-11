@@ -26,7 +26,7 @@ void	open_semaphores(t_philo *p)
 		free_philo(p, 1);
 	forks = sem_open("/forks", 0);
 	print = sem_open("/print", 0);
-	if (forks == SEM_FAILED || p->time == SEM_FAILED || print == SEM_FAILED) 
+	if (forks == SEM_FAILED || p->time == SEM_FAILED || print == SEM_FAILED)
 		free_philo(p, 1);
 	p->forks = forks;
 	p->print = print;
@@ -70,4 +70,19 @@ void	philo_print(t_philo *p, char *action)
 unsigned long int	timestamp(t_philo *p)
 {
 	return (sys_timestamp() - p->timestamp_start);
+}
+
+int	check_malloc(t_philo *a, int *p)
+{
+	if (!a || !p)
+	{
+		printf("Error allocating memory\n");
+		if (a)
+			free(a);
+		if (p)
+			free(p);
+		return (0);
+	}
+	else
+		return (1);
 }
