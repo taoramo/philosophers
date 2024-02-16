@@ -43,10 +43,17 @@ void	*philo_monitor(void *arg)
 void	*ft_death(void *arg)
 {
 	t_philo	*p;
+	int		i;
 
+	i = 0;
 	p = (t_philo *)arg;
 	sem_wait(p->death);
 	sem_post(p->death);
+	while (i < p->n)
+	{
+		sem_post(p->done);
+		i++;
+	}
 	free(p->pids);
 	free(p);
 	sem_close(p->time);
