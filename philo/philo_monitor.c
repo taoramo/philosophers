@@ -73,7 +73,7 @@ void	*philo_monitor(void *arg)
 	ft_usleep(arr[0]->time_die / 2);
 	while (1)
 	{
-		if (is_finished(arr))
+		if (arr[0]->argc == 6 && is_finished(arr))
 			return (0);
 		if (check_death(arr))
 			return (0);

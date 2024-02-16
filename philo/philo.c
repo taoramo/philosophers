@@ -27,6 +27,7 @@ t_philo	**init_philo_values(int argc, char **argv, t_philo **arr)
 			arr[i]->must_eat = -1;
 		if (argc == 6)
 			arr[i]->must_eat = ft_atoi_unsigned(argv[5]);
+		arr[i]->argc = argc;
 		arr[i]->i = i;
 		arr[0]->forks[i] = 0;
 		i++;

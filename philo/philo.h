@@ -26,6 +26,7 @@ typedef struct s_philo
 	unsigned long int	timestamp_eat;
 	unsigned long int	timestamp_start;
 	int					must_eat;
+	int					argc;
 	int					*death;
 	unsigned int		n;
 	int					i;
