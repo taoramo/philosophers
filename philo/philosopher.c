@@ -26,7 +26,7 @@ void	philosopher_odd(t_philo *p)
 		printf("%lu %u has taken a fork\n", timestamp(p), p->i + 1);
 		pthread_mutex_lock(&p->muteces[(p->i + 1) % p->n]);
 		eat(p);
-		if (is_dead(p) || p->must_eat == 0)
+		if (is_dead(p))
 			break ;
 		philo_sleep(p);
 		if (is_dead(p))
@@ -53,7 +53,7 @@ void	philosopher_even(t_philo *p)
 		printf("%lu %u has taken a fork\n", timestamp(p), p->i + 1);
 		pthread_mutex_lock(&p->muteces[(p->i + 1) % p->n]);
 		eat(p);
-		if (is_dead(p) || p->must_eat == 0)
+		if (is_dead(p))
 			break ;
 	}
 }
